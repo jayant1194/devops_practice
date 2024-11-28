@@ -36,7 +36,11 @@ pipeline {
             }
         }
         stage('apply') {
+            when{
+                branch 'master'
+            }
             steps {
+
                 sh '''
 				chmod 777 practice.sh && ./practice.sh  // Ensure the script path is correct and executable
                 '''
