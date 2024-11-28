@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('init') {
             environment{
-                user-i="jey"
+                useri="jey"
             }
             steps {
                 echo "build for ${user-i} and ${key_user}" // Fixed missing space and quotes
