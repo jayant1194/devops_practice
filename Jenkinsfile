@@ -3,7 +3,7 @@ pipeline {
     // options {
     //     ansiColor('xterm') // Enable ANSI color in logs
     // }
-    enivronment{
+    environment{
         key_user="jayanth"
     }
     stages {
