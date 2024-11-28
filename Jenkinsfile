@@ -12,7 +12,7 @@ pipeline {
                 useri="jey"
             }
             steps {
-                echo "build for ${user-i} and ${key_user}" // Fixed missing space and quotes
+                echo "build for ${useri} and ${key_user}" // Fixed missing space and quotes
             }
         }
         stage('plan') {
