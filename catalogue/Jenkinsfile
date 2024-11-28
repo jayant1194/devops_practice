@@ -5,47 +5,36 @@ pipeline {
     // }
 
 
-    parameters {
-        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+    // parameters {
+    //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
 
-        text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
+    //     text(name: 'BIOGRAPHY', defaultValue: '', description: 'Enter some information about the person')
 
-        booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
+    //     booleanParam(name: 'TOGGLE', defaultValue: true, description: 'Toggle this value')
 
-        choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
+    //     choice(name: 'CHOICE', choices: ['One', 'Two', 'Three'], description: 'Pick something')
 
-        password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
-    }
-    environment{
-        key_user="jayanth"
-    }
+    //     password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
+    // }
+   
     stages {
-        stage('init') {
-            environment{
-                useri="jey"
-            }
+        stage('install dependecies') {
+          
             steps {
-                echo "build for ${params.PERSON} and ${key_user}" // Fixed missing space and quotes
+                sh 'ls -lart'
+                sh 'cd catalogue'
+                sh 'npm install' // Fixed missing space and quotes
             }
         }
-        stage('plan') {
-            steps {
+        stage('scan the code'){
+            steps{
                 sh 'pwd'
                 sh 'ls -lart'
-                echo "plan" // Closed the echo statement properly
+                sh 'cd catalogue'
+                sh 'sonar-scanner'
             }
         }
-        stage('apply') {
-            when{
-                branch 'master'
-            }
-            steps {
-
-                sh '''
-				chmod 777 practice.sh && ./practice.sh  // Ensure the script path is correct and executable
-                '''
-            }
-        }
+        
     }
     post {
         success {
