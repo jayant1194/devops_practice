@@ -46,7 +46,12 @@ pipeline {
               
               time_stamp=$(date +"%d%m%y")
               zipname="${name}-${time_stamp}.zip"
-              zip -r $zipname catalogue/* --exclude=.git --exclude=.zip''' // Fixed missing space and quotes
+              zip -r $zipname catalogue/* --exclude=.git --exclude=.zip
+              cp $zipname /tmp/
+
+
+              ''' // Fixed missing space and quotes
+              
             }
             }
         
