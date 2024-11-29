@@ -27,7 +27,7 @@ pipeline {
        stage('Set Environment Variables'){
             steps {
               sh '''
-              env.TIME_STAMP=$(date +'%d%m%y')
+              env.TIME_STAMP="$(date +'%d%m%y')"
               env.ZIPNAME="${NAME}-${TIMESTAMP}.zip"
 
               '''
