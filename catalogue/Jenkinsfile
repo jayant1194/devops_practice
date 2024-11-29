@@ -33,7 +33,7 @@ pipeline {
                 sh 'sonar-scanner'
             }
         }
-        
+        }  
     }
     post {
         success {
