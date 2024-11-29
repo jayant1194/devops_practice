@@ -26,17 +26,12 @@ pipeline {
 
        stage('Set Environment Variables'){
             steps {
-                script {
-                    // Generate timestamp using shell and assign to TIME_STAMP
-                    env.TIME_STAMP = sh(
-                        script: "date +'%d%m%y'",
-                        returnStdout: true
-                    ).trim()
-                    
-                    // Construct ZIPNAME dynamically
-                    env.ZIPNAME = "${env.NAME}-${env.TIME_STAMP}.zip"
-                    echo "Generated ZIPNAME: ${env.ZIPNAME}"
-                }
+              sh '''
+              env.TIME_STAMP=$(date +'%d%m%y')
+              env.ZIPNAME="${NAME}-${TIMESTAMP}.zip"
+
+              '''
+              
             }
        }
         stage('install dependecies') {
