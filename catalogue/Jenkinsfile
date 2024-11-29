@@ -17,31 +17,31 @@ pipeline {
 
     //     password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     // }
-    environment {
-       NAME="node"
-       TIME_STAMP=""
-       ZIPNAME=""
-   }
+//     environment {
+//        NAME="node"
+//        TIME_STAMP=""
+//        ZIPNAME=""
+//    }
     stages {
 
-       stage('Set Environment Variables') {
-            steps {
-                script {
-                    // Generate timestamp
-                    def timeStamp = sh(
-                        script: "date +'%d%m%y'",
-                        returnStdout: true
-                    ).trim()
+//        stage('Set Environment Variables') {
+//             steps {
+//                 script {
+//                     // Generate timestamp
+//                     def timeStamp = sh(
+//                         script: "date +'%d%m%y'",
+//                         returnStdout: true
+//                     ).trim()
                     
-                    // Set global environment variables
-                    env.TIME_STAMP = timeStamp
-                    env.ZIPNAME = "${env.NAME}-${env.TIME_STAMP}.zip"
+//                     // Set global environment variables
+//                     env.TIME_STAMP = timeStamp
+//                     env.ZIPNAME = "${env.NAME}-${env.TIME_STAMP}.zip"
                     
-                    echo "Generated TIME_STAMP: ${env.TIME_STAMP}"
-                    echo "Generated ZIPNAME: ${env.ZIPNAME}"
-                }
-            }
-       }
+//                     echo "Generated TIME_STAMP: ${env.TIME_STAMP}"
+//                     echo "Generated ZIPNAME: ${env.ZIPNAME}"
+//                 }
+//             }
+//        }
         stage('install dependecies') {
           
             steps {
@@ -67,8 +67,8 @@ pipeline {
                 pwd
               ls -latr
               
-              zip -r "${env.ZIPNAME}" catalogue/* -x ".git" "*.zip" "Jenkinsfile"
-              cp $zipname /tmp/
+              zip -r catalogue.zip catalogue/* -x ".git" "*.zip" "Jenkinsfile"
+              cp catalogue.zip /tmp/
 
 
               ''' // Fixed missing space and quotes
@@ -82,7 +82,7 @@ pipeline {
                         nexusArtifactUploader(
                         nexusVersion: 'nexus3',
                         protocol: 'http',
-                        nexusUrl: '3.84.115.69:8081/',
+                        nexusUrl: '3.84.115.69:8081',
                         groupId: 'com.roboshop',
                         version: 1.0,
                         repository: 'catalogue',
@@ -90,7 +90,7 @@ pipeline {
                         artifacts: [
                             [artifactId: catalogue,
                             classifier: '',
-                            file: "${env.ZIPNAME}",
+                            file: "catalogue.zip",
                             type: 'zip']
         ])
                 }
