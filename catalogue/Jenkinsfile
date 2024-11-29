@@ -26,16 +26,36 @@ pipeline {
             }
             }
         }
-        stage('scan the code'){
-            steps{
-                dir('catalogue'){
+        // stage('scan the code'){
+        //     steps{
+        //         dir('catalogue'){
                 
-                sh 'sonar-scanner'
+        //         sh 'sonar-scanner'
+        //     }
+        // }
+        // }  
+
+    stages {
+        stage('build') {
+          
+            steps {
+                sh '''
+                pwd
+              ls -latr
+              name="node"
+              
+              time_stamp=$(date +"%d%m%y")
+              zipname="${name}-${time_stamp}.zip"
+              zip -r $zipname catalogue/* --exclude=.git --exclude=.zip''' // Fixed missing space and quotes
+            }
             }
         }
-        }  
     }
     post {
+        always{
+         deleteDir()
+            echo "Workspace cleared"
+            }
         success {
             echo "it will work for success"
         }
