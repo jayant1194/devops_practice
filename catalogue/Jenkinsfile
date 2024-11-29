@@ -17,7 +17,7 @@ pipeline {
 
     //     password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     // }
-   environment{
+    environment{
        name="node"
        time_stamp=$(date +"%d%m%y")
        zipname="${name}-${time_stamp}.zip"
@@ -57,7 +57,7 @@ pipeline {
             }
             }
 
-            stage("artificat upload"){
+        stage("artificat upload"){
                 steps{
 
                         nexusArtifactUploader(
