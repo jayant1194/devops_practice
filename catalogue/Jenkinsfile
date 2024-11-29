@@ -24,14 +24,22 @@ pipeline {
    }
     stages {
 
-       stage('Set Environment Variables'){
+       stage('Set Environment Variables') {
             steps {
-              sh '''
-              env.TIME_STAMP="$(date +'%d%m%y')"
-              env.ZIPNAME="${NAME}-${TIMESTAMP}.zip"
-
-              '''
-              
+                script {
+                    // Generate timestamp
+                    def timeStamp = sh(
+                        script: "date +'%d%m%y'",
+                        returnStdout: true
+                    ).trim()
+                    
+                    // Set global environment variables
+                    env.TIME_STAMP = timeStamp
+                    env.ZIPNAME = "${env.NAME}-${env.TIME_STAMP}.zip"
+                    
+                    echo "Generated TIME_STAMP: ${env.TIME_STAMP}"
+                    echo "Generated ZIPNAME: ${env.ZIPNAME}"
+                }
             }
        }
         stage('install dependecies') {
