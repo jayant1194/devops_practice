@@ -21,16 +21,15 @@ pipeline {
         stage('install dependecies') {
           
             steps {
-                sh 'ls -lart'
-                sh 'cd catalogue'
+                dir('catalogue'){
                 sh 'npm install' // Fixed missing space and quotes
+            }
             }
         }
         stage('scan the code'){
             steps{
-                sh 'pwd'
-                sh 'ls -lart'
-                sh 'cd catalogue'
+                dir('catalogue'){
+                
                 sh 'sonar-scanner'
             }
         }
