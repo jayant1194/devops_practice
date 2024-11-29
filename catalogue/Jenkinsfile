@@ -79,10 +79,10 @@ pipeline {
         
     }
     post {
-        always{
-         deleteDir()
-            echo "Workspace cleared"
-            }
+        // always{
+        //  deleteDir()
+        //     echo "Workspace cleared"
+        //     }
         success {
             echo "it will work for success"
         }
