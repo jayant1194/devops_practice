@@ -46,13 +46,33 @@ pipeline {
               
               time_stamp=$(date +"%d%m%y")
               zipname="${name}-${time_stamp}.zip"
-              zip -r $zipname catalogue/* --exclude=.git --exclude=.zip
+              zip -r $zipname catalogue/* -x ".git" "*.zip" "Jenkinsfile"
               cp $zipname /tmp/
 
 
               ''' // Fixed missing space and quotes
               
             }
+            }
+
+            stage("artificat upload"){
+                steps{
+
+                        nexusArtifactUploader(
+                        nexusVersion: 'nexus3',
+                        protocol: 'http',
+                        nexusUrl: '3.84.7.44:8081/',
+                        groupId: 'com.roboshop',
+                        version: version,
+                        repository: 'catalogue',
+                        credentialsId: 'nexus',
+                        artifacts: [
+                            [artifactId: catalogue,
+                            classifier: '',
+                            file: 'catalogue.zip',
+                            type: 'zip']
+        ]
+                }
             }
         
     }
