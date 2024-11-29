@@ -20,7 +20,7 @@ pipeline {
    environment{
        name="node"
        time_stamp=$(date +"%d%m%y")
-       zipname="${name}-${time_stamp}.zip
+       zipname="${name}-${time_stamp}.zip"
    }
     stages {
         stage('install dependecies') {
