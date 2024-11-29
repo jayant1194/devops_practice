@@ -35,7 +35,7 @@ pipeline {
         // }
         // }  
 
-    stages {
+   
         stage('build') {
           
             steps {
@@ -49,7 +49,7 @@ pipeline {
               zip -r $zipname catalogue/* --exclude=.git --exclude=.zip''' // Fixed missing space and quotes
             }
             }
-        }
+        
     }
     post {
         always{
