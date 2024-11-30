@@ -4,7 +4,7 @@ pipeline {
     // options {
     //     ansiColor('xterm') // Enable ANSI color in logs
     // }
-    // 
+    //commenting li 
     //this is etstin
     // parameters {
     //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
