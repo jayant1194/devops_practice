@@ -24,10 +24,11 @@ pipeline {
 
        stage('set version'){
            steps{
+              dir('catalogue'){
            script {
                     def version = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
                     echo "Version: ${version}"
-                }
+                }}
            }
      
 
