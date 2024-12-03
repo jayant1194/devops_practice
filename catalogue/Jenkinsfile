@@ -4,8 +4,8 @@ pipeline {
     // options {
     //     ansiColor('xterm') // Enable ANSI color in logs
     // }
-    // commenting line 
-    //
+
+
     // parameters {
     //     string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
 
@@ -17,31 +17,21 @@ pipeline {
 
     //     password(name: 'PASSWORD', defaultValue: 'SECRET', description: 'Enter a password')
     // }
-//     environment {
-//        NAME="node"
-//        TIME_STAMP=""
-//        ZIPNAME=""
-//    }
+    environment {
+      version = ''
+   }
     stages {
 
-//        stage('Set Environment Variables') {
-//             steps {
-//                 script {
-//                     // Generate timestamp
-//                     def timeStamp = sh(
-//                         script: "date +'%d%m%y'",
-//                         returnStdout: true
-//                     ).trim()
-                    
-//                     // Set global environment variables
-//                     env.TIME_STAMP = timeStamp
-//                     env.ZIPNAME = "${env.NAME}-${env.TIME_STAMP}.zip"
-                    
-//                     echo "Generated TIME_STAMP: ${env.TIME_STAMP}"
-//                     echo "Generated ZIPNAME: ${env.ZIPNAME}"
-//                 }
-//             }
-//        }
+       stage('set version'){
+           steps{
+           script {
+                    def version = sh(script: "node -p \"require('./package.json').version\"", returnStdout: true).trim()
+                    echo "Version: ${version}"
+                }
+           }
+     
+
+       }
         stage('install dependecies') {
           
             steps {
@@ -68,6 +58,7 @@ pipeline {
               ls -latr
               
               zip -r catalogue.zip catalogue/* -x ".git" "*.zip" "Jenkinsfile"
+
               cp catalogue.zip /tmp/
 
 
@@ -84,7 +75,7 @@ pipeline {
                         protocol: 'http',
                         nexusUrl: '3.84.115.69:8081',
                         groupId: 'com.roboshop',
-                        version: '1.1',
+                        version: '${version}',
                         repository: 'catalogue',
                         credentialsId: 'nexus',
                         artifacts: [
@@ -98,10 +89,10 @@ pipeline {
        
     }
     post {
-        // always{
-        //  deleteDir()
-        //     echo "Workspace cleared"
-        //     }
+        always{
+         deleteDir()
+            echo "Workspace cleared"
+            }
         success {
             echo "it will work for success"
         }
