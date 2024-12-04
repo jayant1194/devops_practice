@@ -68,34 +68,42 @@ pipeline {
             }
             }
 
-        stage("artificat upload"){
-                steps{
+        // stage("artificat upload"){
+        //         steps{
 
-                        nexusArtifactUploader(
-                        nexusVersion: 'nexus3',
-                        protocol: 'http',
-                        nexusUrl: '44.203.138.7:8081',
-                        groupId: 'com.roboshop',
-                        version: '${version}',
-                        repository: 'catalogue',
-                        credentialsId: 'nexus',
-                        artifacts: [
-                            [artifactId: 'catalogue',
-                            classifier: '',
-                            file: "catalogue.zip",
-                            type: 'zip']
-        ])
-                }
-            }
+        //                 nexusArtifactUploader(
+        //                 nexusVersion: 'nexus3',
+        //                 protocol: 'http',
+        //                 nexusUrl: '3.86.244.92:8081',
+        //                 groupId: 'com.roboshop',
+        //                 version: '${version}',
+        //                 repository: 'catalogue',
+        //                 credentialsId: 'nexus',
+        //                 artifacts: [
+        //                     [artifactId: 'catalogue',
+        //                     classifier: '',
+        //                     file: "catalogue.zip",
+        //                     type: 'zip']
+        // ])
+        //         }
+        //     }
 //downstream job should run before this  , wait  until it finished 
 
         stage('deploy') {
           
             steps {
                echo "Deployment"
+               script{
+                    echo "Deployment"
+                    def params = [
+                        string(name: 'version', value: "$version")
+                    ]
+                    build job: "../catalogue-deploy", wait: true, parameters: params
+                }
+
                  
                 // Trigger the downstream pipeline and pass the VERSION parameter
-                build job: '../catalogue-deploy', parameters: [string(name: 'version', value: "${version}")],wait: true
+                
           
               
             }
@@ -103,10 +111,7 @@ pipeline {
        
     }
     post {
-        always{
-         deleteDir()
-            echo "Workspace cleared"
-            }
+       
         success {
             echo "it will work for success"
         }
