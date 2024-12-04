@@ -37,6 +37,7 @@ pipeline {
           
             steps {
                 dir('catalogue'){
+                echo "Version: ${env.version}"
                 sh 'npm install' // Fixed missing space and quotes
             }
             }
@@ -93,10 +94,11 @@ pipeline {
           
             steps {
                echo "Deployment"
+               echo "Version: ${env.version}"
                script{
                     echo "Deployment"
                     def params = [
-                        string(name: 'version', value: "$version")
+                        string(name: 'version', value: "${env.version}")
                     ]
                     build job: "../catalogue-deploy", wait: true, parameters: params
                 }
