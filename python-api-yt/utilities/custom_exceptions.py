@@ -1,0 +1,5 @@
+
+
+
+class JsonschemaException(Exception):
+    pass

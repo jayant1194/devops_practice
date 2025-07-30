@@ -1,0 +1,83 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Spotify Album Search Response",
+    "type": "object",
+    "properties": {
+    "albums": {
+    "type": "object",
+    "properties": {
+    "href": { "type": "string", "format": "uri" },
+    "limit": { "type": "integer" },
+    "next": { "type": "string" },
+    "offset": { "type": "integer" },
+    "previous": { "type": "string" },
+    "total": { "type": "integer" },
+    "items": {
+    "type": "array",
+    "minItems": 1,
+    "items": {
+    "type": "object",
+    "properties": {
+    "album_type": { "type": "string" },
+    "total_tracks": { "type": "integer" },
+    "available_markets": {
+    "type": "array",
+    "items": { "type": "string" }
+    },
+    "external_urls": {
+    "type": "object",
+    "properties": {
+    "spotify": { "type": "string", "format": "uri" }
+    },
+    "required": ["spotify"]
+    },
+    "href": { "type": "string", "format": "uri" },
+    "id": { "type": "string" },
+    "images": {
+    "type": "array",
+    "items": {
+    "type": "object",
+    "properties": {
+    "height": { "type": "integer" },
+    "width": { "type": "integer" },
+    "url": { "type": "string", "format": "uri" }
+    },
+    "required": ["height", "width", "url"]
+    }
+    },
+    "name": { "type": "string" },
+    "release_date": { "type": "string" },
+    "release_date_precision": { "type": "string" },
+    "type": { "type": "string" },
+    "uri": { "type": "string" },
+    "artists": {
+    "type": "array",
+    "items": {
+    "type": "object",
+    "properties": {
+    "external_urls": {
+    "type": "object",
+    "properties": {
+    "spotify": { "type": "string", "format": "uri" }
+    },
+    "required": ["spotify"]
+    },
+    "href": { "type": "string", "format": "uri" },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "type": { "type": "string" },
+    "uri": { "type": "string" }
+    },
+    "required": ["id", "name", "type"]
+    }
+    }
+    },
+    "required": ["album_type", "total_tracks", "id", "name", "release_date", "artists"]
+    }
+    }
+    },
+    "required": ["href", "limit", "offset", "total", "items"]
+    }
+    },
+    "required": ["albums"]
+    }
