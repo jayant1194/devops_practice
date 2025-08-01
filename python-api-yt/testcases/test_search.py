@@ -23,6 +23,7 @@ class Test_search_album():
             logging.info("this is success")
         except Exception as e:
             raise JsonschemaException("json schema failed")
+        #this is the first testcase
     
 
             
