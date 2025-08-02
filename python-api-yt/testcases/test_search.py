@@ -75,6 +75,7 @@ class Test_search_album():
             for j in i["artists"]:
                 print(j["name"])
                 assert j["type"]=="artist", "artist is not there"
+                print("thius is ")
 
     def test_album_external_url(self,album_search_data):
         print("this is just for conflit")
