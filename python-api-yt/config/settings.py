@@ -4,3 +4,4 @@ SPOTIFY_CLIENTSECRET="83d23b636eb04d6a8f792fdfca5db9b9"
 req_headers={
             "Content-Type": "application/x-www-form-urlencoded" 
         }
+check=False
