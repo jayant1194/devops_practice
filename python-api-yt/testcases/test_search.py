@@ -69,7 +69,13 @@ class Test_search_album():
                 raise InvaliddateException("we got invalid date format")
             except TypeError:
                 raise TypeError("this is not valid form")
-                
+    def test_album_artistname(self,album_search_data):
+        for i in album_search_data["data"]["albums"]["items"]:
+            print(len(i["artists"]))
+            for j in i["artists"]:
+                print(j["name"])
+                assert j["type"]=="artist", "artist is not there"
+
 
 
 
@@ -85,4 +91,5 @@ class Test_search_album():
        
 
     
+
 
