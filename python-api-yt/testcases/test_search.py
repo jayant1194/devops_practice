@@ -83,7 +83,8 @@ class Test_search_album():
                 assert "offset=" in j 
             if i=="previous":
                 assert "offset=" in j
-          
+    def test_conflit(self):
+        pass 
 
 
 
