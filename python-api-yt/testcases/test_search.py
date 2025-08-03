@@ -85,6 +85,10 @@ class Test_search_album():
                 assert "offset=" in j
     def test_conflit(self):
         pass 
+    def test_available_markets(self,album_search_data):
+        for i in album_search_data["data"]["albums"]["items"]:
+            print(len(i["available_markets"]))
+          
 
 
 
