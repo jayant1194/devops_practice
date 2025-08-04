@@ -1,6 +1,13 @@
 import pytest
 import requests
 
+from utilities import helper
+from jsonschema import validate
+from schemas import search
+import json
+import logging
+from utilities.custom_exceptions import *
+import re 
 import json
 
 
@@ -31,6 +38,25 @@ class testing:
 def setup():
     return testing().get_token()
 
+
+@pytest.fixture(scope="class")
+def album_search_data(request,setup):
+    token=setup
+    search_type=request.param
+    resp=helper.get_search(token=token,q="master",type=search_type,limit=2,offset=1,include_external="audio")
+    # print(resp)
+    print(resp.status_code)
+    assert resp.status_code==200, "failure due to not sucess 200 statuscode"
+    # print(resp.json())
+        
+      
+        #validate json schema
+    try:
+        validate(instance=resp.json(),schema=helper.load_file(f"schemas/search/test_search_{search_type}.json"))
+        logging.info("this is success")
+    except Exception as e:
+        raise JsonschemaException("json schema failed")
+    return {"data":resp.json()}
 
 
 
