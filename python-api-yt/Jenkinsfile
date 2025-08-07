@@ -1,4 +1,3 @@
-
 pipeline{
     agent{
         docker {
@@ -27,12 +26,12 @@ pipeline{
         }
         stage("run the test"){
             steps{
-                sh "pytest --junitxml=results.xml || true"
+                sh "python -m pytest -v -s"
             }
         }
         stage("archive results"){
             steps{
-                junit 'result.xml'
+                sh "result"
             }
         }
     }
