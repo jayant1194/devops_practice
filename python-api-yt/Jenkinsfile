@@ -1,0 +1,36 @@
+pipeline{
+    agent   any
+    stages{
+        stage('checkout'){
+            steps{
+                checkout scm
+            
+            }
+        }
+
+        stage("Install dependecies"){
+            steps{
+                sh"pip install -r requirements.txt"
+            }
+            }
+        stage("Lint"){
+            steps{
+                sh 'pylint **/*.py || true' 
+            }
+        }
+        stage("Run Tests"){
+            steps{
+                sh"python -m pytest -v -s" 
+            }
+        }
+        }
+    }
+    post{
+        success{
+            echo 'Build Success'
+        }
+        failure {
+            echo 'build failure'
+        }
+    }
+}
