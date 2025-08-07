@@ -20,6 +20,9 @@ pipeline{
                     args    "--user=${env.USER_ID}:${env.GROUP_ID}"
         }
     }
+    steps{
+        echo"running"
+    }
             
         }
         stage("checkout-code"){
