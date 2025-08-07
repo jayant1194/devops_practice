@@ -29,13 +29,13 @@ pipeline{
                 sh '''
                 cd python-api-yt
                 ls -lart
-                python -m pytest -v -s
+                python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
         }
         stage("archive results"){
             steps{
-                sh "result"
+               junit 'python-api-yt/results.xml'
             }
         }
     }
