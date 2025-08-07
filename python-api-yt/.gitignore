@@ -82,5 +82,3 @@ desktop.ini
 .env
 
 # Ignore test result files
-*.xml
-*.json
