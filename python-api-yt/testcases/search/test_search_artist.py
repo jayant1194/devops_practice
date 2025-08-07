@@ -14,6 +14,5 @@ class Test_artist:
     def test_artist_limt(self,album_search_data):
         assert isinstance(album_search_data["data"]["artists"]["limit"],int)," limit is not integer"
         assert  isinstance(album_search_data["data"]["artists"]["offset"],int),"offset is not integer"
-    #this is pr status check 
     def test_indias
 
