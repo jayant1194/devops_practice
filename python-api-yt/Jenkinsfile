@@ -26,7 +26,11 @@ pipeline{
         }
         stage("run the test"){
             steps{
-                sh "python -m pytest -v -s"
+                sh '''
+                cd python-api-yt
+                ls -lart
+                python -m pytest -v -s
+                '''
             }
         }
         stage("archive results"){
