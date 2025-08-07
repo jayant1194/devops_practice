@@ -1,0 +1,86 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+# Ignore Vim swap files
+*.swp
+*.swo
+*.swn
+
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+
+# Ignore test cache (optional, for pytest)
+.pytest_cache/
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+
+# Virtual environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+pip-wheel-metadata/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Pytest cache
+.pytest_cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Editor/IDE-specific files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Vim swap files
+*.swp
+*.swo
+*.swn
+.*.sw?
+
+# macOS, Windows system files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Git directory state
+*.orig
+
+# Logs
+*.log
+
+# dotenv
+.env
+
+# Ignore test result files
+*.xml
+*.json
