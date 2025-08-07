@@ -15,5 +15,5 @@ class Test_artist:
         assert isinstance(album_search_data["data"]["artists"]["limit"],int)," limit is not integer"
         assert  isinstance(album_search_data["data"]["artists"]["offset"],int),"offset is not integer"
     #this is pr status check 
-    def test_india
+    def test_indias
 
