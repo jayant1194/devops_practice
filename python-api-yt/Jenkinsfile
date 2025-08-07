@@ -1,11 +1,27 @@
 pipeline{
-    agent{
-        docker {
-            image  'python:3.11-slim'
-            args    '-u "$(id -u):$(id -g)"'
+    agent none
+
+
+    stages{
+
+        stage("get env"){
+            agent   any
+            steps{
+                script{
+                    env.USER_ID=sh(script:'id -u',returnStdout:true).trim()
+                    env.GROUP_ID=sh(script:'id -g',returnStdout:true).trim()
+                }
+            }
+        }
+        stage("run docker"){
+             agent{
+                docker {
+                    image  'python:3.11-slim'
+                    args    "--user=${env.USER_ID}:${env.GROUP_ID}"
         }
     }
-    stages{
+            
+        }
         stage("checkout-code"){
             steps{
                 checkout scm
