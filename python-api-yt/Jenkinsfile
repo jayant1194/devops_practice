@@ -12,6 +12,19 @@ pipeline{
             
             }
         }
+        stage("PR-name"){
+            when{
+                changeRequest()
+            }
+            steps{
+                script{
+                    def title=env.CHANGE_TITLE ?: ""
+                    if (!title.startsWith("PROJ-")){
+                        error("pr must start with jira id like PROJ-1234")
+                    }
+                }
+            }
+        }
         stage("install dependencies"){
             steps{
                 sh ''' 
