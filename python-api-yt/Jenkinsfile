@@ -16,6 +16,7 @@ pipeline{
             steps{
                 sh 'ls -lart'
                 sh 'cd python-api-yt'
+                sh 'pwd'
                 sh 'pip install -r requirements.txt'
             }
         }
