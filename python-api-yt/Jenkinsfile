@@ -1,4 +1,5 @@
-pipeline{
+
+peline{
     agent{
         docker {
             image  'python:3.11-slim'
@@ -14,10 +15,14 @@ pipeline{
         }
         stage("install dependencies"){
             steps{
-                sh 'ls -lart'
-                sh 'cd python-api-yt'
-                sh 'pwd'
-                sh 'pip install -r requirements.txt'
+                sh ''' 
+                cat /etc/os-release
+                ls -lart
+                cd python-api-yt
+                ls -lart
+                pip install -r requirements.txt
+            
+                '''
             }
         }
         stage("run the test"){
@@ -40,4 +45,4 @@ pipeline{
         }
     }
 
-}
+}>>>>>>> 88985ba (added markets)
