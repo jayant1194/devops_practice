@@ -1,89 +1,61 @@
-pipeline{
-    agent none
+pipeline {
+    agent any
 
-
-    stages{
-
-        stage("get env"){
-            agent   any
-            steps{
-                script{
-                    env.USER_ID=sh(script:'id -u',returnStdout:true).trim()
-                    env.GROUP_ID=sh(script:'id -g',returnStdout:true).trim()
+    stages {
+        stage("Setup User/Group IDs") {
+            steps {
+                script {
+                    env.USER_ID = sh(script: 'id -u', returnStdout: true).trim()
+                    env.GROUP_ID = sh(script: 'id -g', returnStdout: true).trim()
                 }
             }
         }
-        stage("run docker"){
-             agent{
-                docker {
-                    image  'python:3.11-slim'
-                    args    "--user=${env.USER_ID}:${env.GROUP_ID}"
-        }
-    }
-    steps{
-        echo"running"
-    }
-            
-        }
-        stage("checkout-code"){
-            steps{
+        stage("Checkout Code") {
+            steps {
                 checkout scm
-            
             }
         }
-        stage("PR-name"){
-            when{
+        stage("Check PR Title") {
+            when {
                 changeRequest()
             }
-            steps{
-                script{
-                    def title=env.CHANGE_TITLE ?: ""
-                    if (!title.startsWith("PROJ-")){
-                        error("pr must start with jira id like PROJ-1234")
+            steps {
+                script {
+                    def title = env.CHANGE_TITLE ?: ""
+                    if (!title.startsWith("PROJ-")) {
+                        error("PR title must start with a JIRA ID like PROJ-1234")
                     }
                 }
             }
         }
-        stage("install dependencies"){
-            steps{
-                sh ''' 
-                cat id -u
-                cat id -g 
-                cat /etc/os-release
-                ls -lart
-                cd python-api-yt
-                ls -lart
-                pip install -r requirements.txt
-            
-                '''
+        stage("Build and Test") {
+            agent {
+                docker {
+                    image 'python:3.11-slim'
+                    args "--user=${env.USER_ID}:${env.GROUP_ID}"
+                }
             }
-        }
-        stage("run the test"){
-            steps{
-                sh '''
-                cd python-api-yt
-                ls -lart
-                python -m pytest -v -s --junitxml=results.xml || true
-                '''
-            }
-        }
-        stage("archive results"){
-            steps{
-               junit 'python-api-yt/results.xml'
+            steps {
+                sh 'python -m pip install --upgrade pip' // Good practice to update pip first
+                sh 'cd python-api-yt && pip install -r requirements.txt'
+                sh 'cd python-api-yt && python -m pytest -v -s --junitxml=results.xml || true'
             }
         }
     }
-    post{
-        success{
-            echo "Build and test passed"
-        }
-        failure{
-            echo "Build test failed"
-        }
-        always{
-            echo 'Cleaning working dir'
+    
+    post {
+        always {
+            echo 'Archiving test results'
+            junit 'python-api-yt/results.xml'
+            
+            echo 'Cleaning working directory'
             deleteDir()
         }
+        success {
+            echo "Build and test passed successfully!"
+        }
+        failure {
+            echo "Build and test failed."
+        }
     }
-
 }
