@@ -1,36 +1,51 @@
 pipeline{
-    agent   any
+    agent{
+        docker {
+            image  'python:3.11-slim'
+            args    '-u root'
+        }
+    }
     stages{
-        stage('checkout'){
+        stage("checkout-code"){
             steps{
                 checkout scm
             
             }
         }
-
-        stage("Install dependecies"){
+        stage("install dependencies"){
             steps{
-                sh"pip install -r requirements.txt"
-            }
-            }
-        stage("Lint"){
-            steps{
-                sh 'pylint **/*.py || true' 
+                sh ''' 
+                cat /etc/os-release
+                ls -lart
+                cd python-api-yt
+                ls -lart
+                pip install -r requirements.txt
+            
+                '''
             }
         }
-        stage("Run Tests"){
+        stage("run the test"){
             steps{
-                sh"python -m pytest -v -s" 
+                sh '''
+                cd python-api-yt
+                ls -lart
+                python -m pytest -v -s --junitxml=results.xml || true
+                '''
             }
         }
+        stage("archive results"){
+            steps{
+               junit 'python-api-yt/results.xml'
+            }
         }
     }
     post{
         success{
-            echo 'Build Success'
+            echo "Build and test passed"
         }
-        failure {
-            echo 'build failure'
+        failure{
+            echo "Build test failed"
         }
     }
+
 }

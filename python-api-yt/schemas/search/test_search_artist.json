@@ -1,0 +1,70 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "Spotify Artist Search Response",
+    "type": "object",
+    "properties": {
+      "artists": {
+        "type": "object",
+        "properties": {
+          "href": { "type": "string", "format": "uri" },
+          "limit": { "type": "integer" },
+          "next": { "type": ["string", "null"], "format": "uri" },
+          "offset": { "type": "integer" },
+          "previous": { "type": ["string", "null"], "format": "uri" },
+          "total": { "type": "integer" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "external_urls": {
+                  "type": "object",
+                  "properties": {
+                    "spotify": { "type": "string", "format": "uri" }
+                  },
+                  "required": ["spotify"]
+                },
+                "followers": {
+                  "type": "object",
+                  "properties": {
+                    "href": { "type": ["string", "null"] },
+                    "total": { "type": "integer" }
+                  },
+                  "required": ["href", "total"]
+                },
+                "genres": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "href": { "type": "string", "format": "uri" },
+                "id": { "type": "string" },
+                "images": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "url": { "type": "string", "format": "uri" },
+                      "height": { "type": "integer" },
+                      "width": { "type": "integer" }
+                    },
+                    "required": ["url", "height", "width"]
+                  }
+                },
+                "name": { "type": "string" },
+                "popularity": { "type": "integer" },
+                "type": { "type": "string", "const": "artist" },
+                "uri": { "type": "string" }
+              },
+              "required": [
+                "external_urls", "followers", "genres", "href",
+                "id", "images", "name", "popularity", "type", "uri"
+              ]
+            }
+          }
+        },
+        "required": ["href", "limit", "next", "offset", "previous", "total", "items"]
+      }
+    },
+    "required": ["artists"]
+  }
+  
