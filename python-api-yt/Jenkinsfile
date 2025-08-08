@@ -29,7 +29,7 @@ pipeline{
                 }
             }
         }
-        stage("Build and Test"){
+        stage("Build and archive"){
             agent{
                 docker {
                     image  'python:3.11-slim'
@@ -37,6 +37,9 @@ pipeline{
                     args   "-u root"
                 }
             }
+            stages{
+
+            stage("build and test"){
             steps{
                 sh ''' 
                 cd python-api-yt
@@ -45,14 +48,14 @@ pipeline{
                 '''
             }
         }
-        // stage("archive results"){
-        //     steps{
-        //         dir('python-api-yt'){
-        //             junit 'results.xml'
-        //         }
-        //     }
-        // }
-    }
+        stage("archive results"){
+            steps{
+                dir('python-api-yt'){
+                    junit 'results.xml'
+                }
+            }
+        }
+    }}
     post{
         success{
             echo "Build and test passed"
@@ -69,10 +72,7 @@ pipeline{
         
             chown -R  ${USER_ID}:${GROUP_ID} *
             '''
-            echo "copy the reports"
-            dir('python-api-yt'){
-                    junit 'results.xml'
-                }
+        
             // The `deleteDir()` command handles all cleanup. No need for `chown`.
             deleteDir()
             echo "cleaned dir"
