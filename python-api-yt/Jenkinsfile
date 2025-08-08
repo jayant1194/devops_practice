@@ -39,7 +39,7 @@ pipeline{
             steps{
                 sh ''' 
                 cd python-api-yt
-                pip install -r requirements.txt
+                pip install --cache-dir /tmp/pip_cache -r requirements.txt
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
