@@ -33,13 +33,14 @@ pipeline{
             agent{
                 docker {
                     image  'python:3.11-slim'
-                    args    "--user=${env.USER_ID}:${env.GROUP_ID}"
+                    // args    "--user=${env.USER_ID}:${env.GROUP_ID}"
+                    args   "-u root"
                 }
             }
             steps{
                 sh ''' 
                 cd python-api-yt
-                pip install --cache-dir /tmp/pip_cache -r requirements.txt
+                pip install  -r requirements.txt
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
@@ -59,6 +60,10 @@ pipeline{
         }
         always{
             echo 'Cleaning working dir'
+
+            sh '''
+            chown -R  ${env.USER_ID}:${env.GROUP_ID} *
+            '''
             // The `deleteDir()` command handles all cleanup. No need for `chown`.
             deleteDir()
         }
