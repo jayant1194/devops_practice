@@ -55,7 +55,7 @@ pipeline{
                 }
             }
         }
-    }}
+    }}}
     post{
         success{
             echo "Build and test passed"
@@ -78,4 +78,4 @@ pipeline{
             echo "cleaned dir"
         }
     }
-}}
+}
