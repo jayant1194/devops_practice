@@ -1,44 +1,72 @@
 pipeline{
-    agent{
-        docker {
-            image  'python:3.11-slim'
-            args    '-u root'
-        }
-    }
+    agent any
+
     stages{
+        stage("pr info"){
+            steps{
+                script{
+                     echo "CHANGE_ID: ${env.CHANGE_ID}"
+                    echo "CHANGE_TITLE: ${env.CHANGE_TITLE}"
+                    echo "CHANGE_BRANCH: ${env.CHANGE_BRANCH}"
+                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+                    echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+                }
+            }
+        }
+        stage("Setup Environment"){
+            steps{
+                script{
+                    env.USER_ID = sh(script:'id -u',returnStdout:true).trim()
+                    env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
+                }
+            }
+        }
         stage("checkout-code"){
             steps{
                 checkout scm
             
             }
         }
-        stage("install dependencies"){
+        stage("PR-name"){
+            when{
+                changeRequest()
+            }
             steps{
-                sh ''' 
-                cat /etc/os-release
-                ls -lart
-                cd python-api-yt
-                ls -lart
-                pip install -r requirements.txt
-            
-                '''
+                script{
+                    def title=env.CHANGE_TITLE ?: ""
+                    if (!title.startsWith("PROJ-")){
+                        error("pr must start with jira id like PROJ-1234")
+                    }
+                }
             }
         }
-        stage("run the test"){
+        stage("Build and archive"){
+            agent{
+                docker {
+                    image  'python:3.11-slim'
+                    // args    "--user=${env.USER_ID}:${env.GROUP_ID}"
+                    args   "-u root"
+                }
+            }
+            stages{
+
+            stage("build and test"){
             steps{
-                sh '''
+                sh ''' 
                 cd python-api-yt
-                ls -lart
+                pip install  -r requirements.txt
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
         }
         stage("archive results"){
             steps{
-               junit 'python-api-yt/results.xml'
+                dir('python-api-yt'){
+                    junit 'results.xml'
+                }
             }
         }
-    }
+    }}}
     post{
         success{
             echo "Build and test passed"
@@ -46,6 +74,19 @@ pipeline{
         failure{
             echo "Build test failed"
         }
-    }
+        always{
+            echo 'Cleaning working dir'
+            echo "USER_ID=${env.USER_ID}"
+            echo "GROUP_ID=${env.GROUP_ID}"
 
+            sh '''
+        
+            chown -R  ${USER_ID}:${GROUP_ID} *
+            '''
+        
+            // The `deleteDir()` command handles all cleanup. No need for `chown`.
+            deleteDir()
+            echo "cleaned dir"
+        }
+    }
 }
