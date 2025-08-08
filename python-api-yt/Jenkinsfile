@@ -1,11 +1,15 @@
 pipeline{
-    agent{
-        docker {
-            image  'python:3.11-slim'
-           
-        }
-    }
+    agent any
+
     stages{
+        stage("Setup Environment"){
+            steps{
+                script{
+                    env.USER_ID = sh(script:'id -u',returnStdout:true).trim()
+                    env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
+                }
+            }
+        }
         stage("checkout-code"){
             steps{
                 checkout scm
@@ -25,24 +29,17 @@ pipeline{
                 }
             }
         }
-        stage("install dependencies"){
+        stage("Build and Test"){
+            agent{
+                docker {
+                    image  'python:3.11-slim'
+                    args    "--user=${env.USER_ID}:${env.GROUP_ID}"
+                }
+            }
             steps{
                 sh ''' 
-                
-                cat /etc/os-release
-                ls -lart
                 cd python-api-yt
-                ls -lart
-                pip install  --user -r requirements.txt
-            
-                '''
-            }
-        }
-        stage("run the test"){
-            steps{
-                sh '''
-                cd python-api-yt
-                ls -lart
+                pip install -r requirements.txt
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
@@ -62,9 +59,8 @@ pipeline{
         }
         always{
             echo 'Cleaning working dir'
-            sh 'sudo chown -R jenkins:jenkins . || true'
+            // The `deleteDir()` command handles all cleanup. No need for `chown`.
             deleteDir()
         }
     }
-
 }
