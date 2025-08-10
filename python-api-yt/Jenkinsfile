@@ -86,21 +86,43 @@ pipeline {
         
         stage("MAIN BRANCH CI/CD"){
             when{
-                branch 'main'
+                branch 'cdn-1123'
             }
             stages{
-                stage("main CI"){
+                stage("lint"){
                     steps{
                         sh '''
                             we will implement later
-                         '''
+                         '''}
+                         }
+                stage("build"){
+                    steps{
+                        sh '''
+                        build can do later '''
+                    }
+                }
+                stage("tag build"){
+                    steps{
+                        script{
+                            def tagname="qa-v1.0.${env.BUILD_NUMBER}"
+                            sh '''
+                                git config user.email "jayantjae@gmail.com"
+                                git config user.name  "jayant"
+                                git tag -a {tagname} -m "QA release ${tagname}"
+                                git push origin ${tagname}
+                            
+                            '''
+                            echo "created tagname ${tagname}"
+                        }
+                    }
+                }
                     }
                 }
             }
-        }
+        
         // FULL PIPELINE
        
-    }
+    
 
     post {
         success {
@@ -108,6 +130,17 @@ pipeline {
         }
         failure {
             echo "Pipeline failed"
+        }
+        always{
+            echo 'Cleaning working dir'
+            echo "USER_ID=${env.USER_ID}"
+            echo "GROUP_ID=${env.GROUP_ID}"
+            sh '''
+            chown -R  ${USER_ID}:${GROUP_ID} *
+            '''
+            // The `deleteDir()` command handles all cleanup. No need for `chown`
+            deleteDir()
+            echo "cleaned dir"
         }
     }
 
