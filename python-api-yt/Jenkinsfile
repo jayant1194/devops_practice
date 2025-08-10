@@ -1,50 +1,107 @@
-pipeline{
-    agent{
-        docker {
-            image  'python:3.11-slim'
-            args    '-u root'
+pipeline {
+    agent any
+
+    stages {
+        stage('environment'){
+            steps{
+                script{
+                    env.USER_ID = sh(script:'id -u',returnStdout:true).trim()
+                    env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
+                }
+            }
         }
-    }
-    stages{
-        stage("checkout-code"){
+        stage("check out scm"){
             steps{
                 checkout scm
-            
+            }
+
+        }
+        stage("Branch/PR Info") {
+            steps {
+                script {
+                    echo "BRANCH_NAME: ${env.BRANCH_NAME}"
+                    echo "CHANGE_ID: ${env.CHANGE_ID}"
+                    echo "CHANGE_TARGET: ${env.CHANGE_TARGET}"
+                }
             }
         }
-        stage("install dependencies"){
+
+        // PR VALIDATION
+        stage("PR Validation Checks") {
+            when {
+                changeRequest()
+                
+            }
+            agent{
+                docker {
+                    image  'python:3.11-slim'
+                    // args    "--user=${env.USER_ID}:${env.GROUP_ID}"
+                    args   "-u root"
+                }
+            }
+           stages{
+               stage("PR Name check"){
+                    steps{
+                script{
+                    def title=env.CHANGE_TITLE ?: ""
+                    if (!title.startsWith("PROJECT-")){
+                        error("pr must start with jira id like PROJ-1234")
+                    }
+                }
+            }
+
+               }
+               stage("Lint"){
+                   steps{
+                       echo "this is for linting"
+                   }
+               }
+               
+         
+          
+
+            stage("build and test"){
             steps{
                 sh ''' 
-                cat /etc/os-release
-                ls -lart
                 cd python-api-yt
-                ls -lart
-                pip install -r requirements.txt
-            
-                '''
-            }
-        }
-        stage("run the test"){
-            steps{
-                sh '''
-                cd python-api-yt
-                ls -lart
+                pip install  -r requirements.txt
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
         }
         stage("archive results"){
             steps{
-               junit 'python-api-yt/results.xml'
+                dir('python-api-yt'){
+                    junit 'results.xml'
+                }
             }
         }
-    }
-    post{
-        success{
-            echo "Build and test passed"
+    }}
+        
+        stage("MAIN BRANCH CI/CD"){
+            when{
+                branch 'main'
+            }
+            stages{
+                stage("main CI"){
+                    steps{
+                        sh '''
+                            we will implement later
+                         '''
+                    }
+                }
+            }
         }
-        failure{
-            echo "Build test failed"
+        // FULL PIPELINE
+       
+    }
+
+    post {
+        success {
+            echo "Pipeline completed successfully"
+        }
+        failure {
+            echo "Pipeline failed"
         }
     }
 
