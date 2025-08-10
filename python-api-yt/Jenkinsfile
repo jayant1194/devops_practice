@@ -8,6 +8,9 @@ pipeline {
                     env.USER_ID = sh(script:'id -u',returnStdout:true).trim()
                     env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
                 }
+                sh '''
+                printenv| true
+                '''
             }
         }
         stage("check out scm"){
@@ -91,14 +94,15 @@ pipeline {
             stages{
                 stage("lint"){
                     steps{
-                        sh '''
-                            we will implement later
-                         '''}
+                        
+                           echo " we will implement later"
+                         
+                         }
                          }
                 stage("build"){
                     steps{
-                        sh '''
-                        build can do later '''
+                        
+                         echo "build can do later"
                     }
                 }
                 stage("tag build"){
