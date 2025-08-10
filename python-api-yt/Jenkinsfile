@@ -9,7 +9,7 @@ pipeline {
                     env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
                 }
                 sh '''
-                printenv| true
+                printenv
                 '''
             }
         }
@@ -112,7 +112,7 @@ pipeline {
                             sh '''
                                 git config user.email "jayantjae@gmail.com"
                                 git config user.name  "jayant"
-                                git tag -a {tagname} -m "QA release ${tagname}"
+                                git tag -a ${tagname} -m "QA release ${tagname}"
                                 git push origin ${tagname}
                             
                             '''
