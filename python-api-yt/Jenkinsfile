@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+      parameters {
+        booleanParam(name: 'CREATE_TAG', defaultValue: false, description: 'Check to create a release tag')
+    }
     stages {
         stage('environment'){
             steps{
@@ -90,6 +92,7 @@ pipeline {
         stage("MAIN BRANCH CI/CD"){
             when{
                 branch 'cdn-1123'
+
             }
             stages{
                 stage("lint"){
@@ -106,16 +109,24 @@ pipeline {
                     }
                 }
                 stage("tag build"){
+                    when {
+                        allOf{
+                            branch 'cdn-1123'
+                            expression {params.CREATE_TAG==true}
+                        }
+                    }
                     steps{
                         script{
                             def tagname="qa-v1.0.${env.BUILD_NUMBER}"
-                            sh '''
+                            echo "${tagname}"
+                            sh """
+                                git checkout ${env.BRANCH_NAME}
                                 git config user.email "jayantjae@gmail.com"
                                 git config user.name  "jayant"
                                 git tag -a ${tagname} -m "QA release ${tagname}"
                                 git push origin ${tagname}
                             
-                            '''
+                          """
                             echo "created tagname ${tagname}"
                         }
                     }
