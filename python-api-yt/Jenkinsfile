@@ -51,12 +51,18 @@ pipeline {
             }
 
                }
+            stage("quality code and checks"){
+                parallel{
                stage("Lint"){
                    steps{
                        echo "this is for linting"
                    }
                }
-               
+               stage("sonar checks"){
+                   steps{
+                       sleep(120)
+                   }
+               }
          
           
 
@@ -68,7 +74,7 @@ pipeline {
                 python -m pytest -v -s --junitxml=results.xml || true
                 '''
             }
-        }
+        }}}
         stage("archive results"){
             steps{
                 dir('python-api-yt'){
