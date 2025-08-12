@@ -1,3 +1,6 @@
+@Library('sdet-python-library') _
+
+
 pipeline {
     agent any
       parameters {
@@ -6,13 +9,7 @@ pipeline {
     stages {
         stage('environment'){
             steps{
-                script{
-                    env.USER_ID = sh(script:'id -u',returnStdout:true).trim()
-                    env.GROUP_ID = sh(script:'id -g',returnStdout:true).trim()
-                }
-                sh '''
-                printenv
-                '''
+               setupEnv()
             }
         }
         stage("check out scm"){
@@ -47,25 +44,21 @@ pipeline {
            stages{
                stage("PR Name check"){
                     steps{
-                script{
-                    def title=env.CHANGE_TITLE ?: ""
-                    if (!title.startsWith("PROJECT-")){
-                        error("pr must start with jira id like PROJ-1234")
-                    }
+                prCheck()
                 }
             }
 
-               }
+               
             stage("quality code and checks"){
                 parallel{
                stage("Lint"){
                    steps{
-                       echo "this is for linting"
+                       lintcode()
                    }
                }
                stage("sonar checks"){
                    steps{
-                       sleep(120)
+                       sonarCheck()
                    }
                }
          
@@ -73,21 +66,15 @@ pipeline {
 
             stage("build and test"){
             steps{
-                sh ''' 
-                cd python-api-yt
-                pip install  -r requirements.txt
-                python -m pytest -v -s --junitxml=results.xml || true
-                '''
-            }
-        }}}
-        stage("archive results"){
-            steps{
-                dir('python-api-yt'){
-                    junit 'results.xml'
-                }
-            }
+                buildandtest("python-api-yt")
+                
         }
-    }}
+        }
+        }
+               
+        }}
+        }
+    
         
         stage("MAIN BRANCH CI/CD"){
             when{
@@ -98,7 +85,7 @@ pipeline {
                 stage("lint"){
                     steps{
                         
-                           echo " we will implement later"
+                           lintcode()
                          
                          }
                          }
@@ -116,19 +103,7 @@ pipeline {
                         }
                     }
                     steps{
-                        script{
-                            def tagname="qa-v1.0.${env.BUILD_NUMBER}"
-                            echo "${tagname}"
-                            sh """
-                                git checkout ${env.BRANCH_NAME}
-                                git config user.email "jayantjae@gmail.com"
-                                git config user.name  "jayant"
-                                git tag -a ${tagname} -m "QA release ${tagname}"
-                                git push origin ${tagname}
-                            
-                          """
-                            echo "created tagname ${tagname}"
-                        }
+                        createTag()
                     }
                 }
                     }
@@ -150,9 +125,9 @@ pipeline {
             echo 'Cleaning working dir'
             echo "USER_ID=${env.USER_ID}"
             echo "GROUP_ID=${env.GROUP_ID}"
-            sh '''
+            sh """
             chown -R  ${USER_ID}:${GROUP_ID} *
-            '''
+            """
             // The `deleteDir()` command handles all cleanup. No need for `chown`
             deleteDir()
             echo "cleaned dir"
@@ -160,3 +135,4 @@ pipeline {
     }
 
 }
+
